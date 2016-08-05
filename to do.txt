@@ -1,0 +1,22 @@
+
+compress images   done
+use media queries to get around unneccesary render block of css (did i do that for pizza site?)
+inline javascript if appropriate
+async js if needed
+inline css is appropriate
+
+
+minify my files at the end
+
+maybe use BEM for css?
+
+what do they mean by: Optimizations made to views/js/main.js make views/pizza.html render with a consistent frame-rate at 60fps when scrolling.
+
+Time to resize pizzas is less than 5 ms using the pizza size slider on the views/pizza.html page. Resize time is shown in the browser developer tools.
+
+
+rewatch the app lifecycles portion and request animation 
+
+maybe rewatch web workers
+
+I still don't understand (e) in relation to an event

@@ -1,3 +1,13 @@
+###Optimizations Made to index.html
+1. Used a web font loader to defer the loading of google fonts until AFTER other parts of the page have started to load. I also made it an asynchronous script.
+2. Used a media query to prevent the print.css from render blocking
+3. Changed script.css from an external file to internal css style sheet using a script tag and moving it over to the html
+4. Compressed all images and reduced sizes were approprtiate.
+5. Made a separate pizzaria image with a reduced size so that the index.html didn't need to reference the image in the views/images folder which was bigger than needed for the front page
+6. Overall, improved the page speed insight score from around a 30/100 for mobile and desktop to a 98/100 for mobile and desktop!
+
+
+
 ## Website Performance Optimization portfolio project
 
 Your challenge, if you wish to accept it (and we sure hope you will), is to optimize this online portfolio for speed! In particular, optimize the critical rendering path and make this page render as quickly as possible by applying the techniques you've picked up in the [Critical Rendering Path course](https://www.udacity.com/course/ud884).
@@ -32,7 +42,7 @@ Profile, optimize, measure... and then lather, rinse, and repeat. Good luck!
 
 ####Part 2: Optimize Frames per Second in pizza.html
 
-To optimize views/pizza.html, you will need to modify views/js/main.js until your frames per second rate is 60 fps or higher. You will find instructive comments in main.js. 
+To optimize views/pizza.html, you will need to modify views/js/main.js until your frames per second rate is 60 fps or higher. You will find instructive comments in main.js.
 
 You might find the FPS Counter/HUD Display useful in Chrome developer tools described here: [Chrome Dev Tools tips-and-tricks](https://developer.chrome.com/devtools/docs/tips-and-tricks).
 

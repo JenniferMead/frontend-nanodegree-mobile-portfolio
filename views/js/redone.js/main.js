@@ -4,6 +4,7 @@ Would request animation frame be helpful? Does paint have anything to do with th
 For the pizza sizing, it seems like its a layout issue because layout says forced reflow could cause performance bottleneck.
 */
 
+
 /*
 Welcome to the 60fps project! Your goal is to make Cam's Pizzeria website run
 jank-free at 60 frames per second.
@@ -404,10 +405,6 @@ var pizzaElementGenerator = function(i) {
   return pizzaContainer;
 };
 
-
-
-
-
 // resizePizzas(size) is called when the slider in the "Our Pizzas" section of the website moves.
 var resizePizzas = function(size) {
   window.performance.mark("mark_start_resize");   // User Timing API function
@@ -430,59 +427,48 @@ var resizePizzas = function(size) {
   }
 
   changeSliderLabel(size);
-
+//THIS is where the problem is
    // Returns the size difference to change a pizza element from one size to another. Called by changePizzaSlices(size).
-  function determineDx (elem, size) {
-    var oldWidth = elem.offsetWidth;
-    var windowWidth = document.querySelector("#randomPizzas").offsetWidth;
-    var oldSize = oldWidth / windowWidth;
+  /*function determineDx (elem, size) {
+    var oldWidth = elem.offsetWidth;  //returns the old layout
+    var windowWidth = document.querySelector("#randomPizzas").offsetWidth; //layout
+    var oldSize = oldWidth / windowWidth; //layout*/
 
     // Changes the slider value to a percent width
-    function sizeSwitcher (size) {
-      switch(size) {
-        case "1":
-          return 0.25;
-        case "2":
-          return 0.3333;
-        case "3":
-          return 0.5;
-        default:
-          console.log("bug in sizeSwitcher");
-      }
-    }
-
-    var newSize = sizeSwitcher(size);
-    var dx = (newSize - oldSize) * windowWidth;
-
-    return dx;
-  }
 
 
-  function layout(size){
-  for(var i = 0; i < document.querySelectorAll(".randomPizzaContainer").length; i++){
-  var dx = determineDx(document.querySelectorAll(".randomPizzaContainer")[i], size);
-  var newwidth = (document.querySelectorAll(".randomPizzaContainer")[i].offsetWidth + dx) + 'px';
-  return newwidth;
-  }
-}
-var newwidth = layout(size);
+//So. I fixed it but I dont know how and I think I need to go back and explain why I did what I did https://classroom.udacity.com/nanodegrees/nd001/parts/00113454012/modules/273584856175461/lessons/4147498575/concepts/41542085800923#
+//I should compare it to the old code
+
+//this is definitely were the problem is
   // Iterates through pizza elements on the page and changes their widths
-  //Question, whenever I try to change querySelectorAll to getElementsByClassName it breaks my code and the pizzas dont resize. Any idea why?
   function changePizzaSizes(size) {
-    for (var i = 0; i < document.querySelectorAll(".randomPizzaContainer").length; i++) {
+    switch(size) {
+      case "1":
+        /*return 0.25;*/
+        newwidth = 25;
+        break;
+      case "2":
+        /*return 0.3333;*/
+        newwidth = 33.3;
+        break;
+      case "3":
+        /*return 0.5;*/
+        newwidth = 50;
+        break;
+      default:
+        console.log("bug in sizeSwitcher");
+    }
+    var randomPizzas = document.querySelectorAll(".randomPizzaContainer");
 
-      document.querySelectorAll(".randomPizzaContainer")[i].style.width = newwidth;
+    for (var i = 0; i < randomPizzas.length; i++) {
+      /*var dx = determineDx(randomPizzas[i], size); //is this calling the above function?
+      var newwidth = (randomPizzas[i].offsetWidth + dx) + 'px'; //accesses layout */
+      randomPizzas[i].style.width = newwidth + "%"; //recalculates style
     }
   }
 
   changePizzaSizes(size);
-
-
-
-
-
-
-
 
   // User Timing API is awesome
   window.performance.mark("mark_end_resize");
@@ -505,13 +491,8 @@ window.performance.measure("measure_pizza_generation", "mark_start_generating", 
 var timeToGenerate = window.performance.getEntriesByName("measure_pizza_generation");
 console.log("Time to generate pizzas on load: " + timeToGenerate[0].duration + "ms");
 
-
-
-
-
 // Iterator for number of times the pizzas in the background have scrolled.
 // Used by updatePositions() to decide when to log the average time per frame
-//I got it from an average of 12 frames per second up to about 40 fps but still need to get it closer to 60 fps so Im not done yet :(
 var frame = 0;
 
 // Logs the average amount of time per 10 frames needed to move the sliding background pizzas on scroll.
@@ -529,31 +510,15 @@ function logAverageFrame(times) {   // times is the array of User Timing measure
 
 // Moves the sliding background pizzas based on scroll position
 function updatePositions() {
-
   frame++;
   window.performance.mark("mark_start_frame");
+
   var items = document.querySelectorAll('.mover');
-
-//this array holds all of the possible positions of pizza moving horizontally
-  var pizzaHolder = new Array();
-
-  //I created a separate for loop to push all of the phase values into an array to separate layout calulating from recalulating styles
   for (var i = 0; i < items.length; i++) {
-  var phase = Math.sin((document.body.scrollTop / 1250) + (i % 5));
-  pizzaHolder.push(phase);
+    var phase = Math.sin((document.body.scrollTop / 1250) + (i % 5));
+    items[i].style.left = items[i].basicLeft + 100 * phase + 'px';
   }
 
-  for (var i = 0; i < items.length; i++) {
-        items[i].style.left = items[i].basicLeft + 100 * pizzaHolder[i] + 'px';
-  }
-
-
-
-  /*for (var i = 0; i < items.length; i++) {
-    //this is where the forced reflow is. The scrollTop property sets or returns the number of pixels an element's content is scrolled vertically. This means its calculating something using layout before style!
-        var phase = Math.sin((document.body.scrollTop / 1250) + (i % 5));
-        items[i].style.left = items[i].basicLeft + 100 * phase + 'px';
-}*/
   // User Timing API to the rescue again. Seriously, it's worth learning.
   // Super easy to create custom metrics.
   window.performance.mark("mark_end_frame");
