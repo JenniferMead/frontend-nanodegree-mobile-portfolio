@@ -456,12 +456,14 @@ var resizePizzas = function(size) {
 
     return dx;
   }
-
+//I avoided having to go to the DOM over and over again in the for loops of the two functions below by holding the results in these variables
+  var lengthHolderOne = document.getElementsByClassName('randomPizzaContainer');
+  var lengthHolderTwo = document.getElementsByClassName("randomPizzaContainer").length;
 
   function layout(size){
-  for(var i = 0; i < document.querySelectorAll(".randomPizzaContainer").length; i++){
-  var dx = determineDx(document.querySelectorAll(".randomPizzaContainer")[i], size);
-  var newwidth = (document.querySelectorAll(".randomPizzaContainer")[i].offsetWidth + dx) + 'px';
+  for(var i = 0; i < lengthHolderTwo; i++){
+  var dx = determineDx((lengthHolderOne)[i], size);
+  var newwidth = (lengthHolderOne[i].offsetWidth + dx) + 'px';
   return newwidth;
   }
 }
@@ -469,9 +471,9 @@ var newwidth = layout(size);
   // Iterates through pizza elements on the page and changes their widths
   //Question, whenever I try to change querySelectorAll to getElementsByClassName it breaks my code and the pizzas dont resize. Any idea why?
   function changePizzaSizes(size) {
-    for (var i = 0; i < document.querySelectorAll(".randomPizzaContainer").length; i++) {
+    for (var i = 0; i < lengthHolderTwo; i++) {
 
-      document.querySelectorAll(".randomPizzaContainer")[i].style.width = newwidth;
+      lengthHolderOne[i].style.width = newwidth;
     }
   }
 
@@ -538,12 +540,29 @@ function updatePositions() {
   var pizzaHolder = new Array();
 
   //I created a separate for loop to push all of the phase values into an array to separate layout calulating from recalulating styles
-  for (var i = 0; i < items.length; i++) {
-  var phase = Math.sin((document.body.scrollTop / 1250) + (i % 5));
+  //I also separated out the first part of the calculation of var phase becuase it doesn't change and thus doesn't need to be recalculated over and over
+
+
+var pizzaWidth = 73.33;
+var pizzaHeight = 100;
+var numColumns = screen.width/pizzaWidth;
+var numRows = screen.height/pizzaHeight;
+var numPizzas = numRows*numColumns;
+//then plug in numPizzas
+
+console.log(numColumns);
+console.log(numRows);
+console.log(numPizzas);
+
+  var lengthHolder = items.length;
+  var phaseHolder = document.body.scrollTop / 1250;
+
+  for (var i = 0; i <numPizzas; i++) {
+  var phase = Math.sin((phaseHolder) + (i % 5));
   pizzaHolder.push(phase);
   }
 
-  for (var i = 0; i < items.length; i++) {
+  for (var i = 0; i <lengthHolder; i++) {
         items[i].style.left = items[i].basicLeft + 100 * pizzaHolder[i] + 'px';
   }
 
