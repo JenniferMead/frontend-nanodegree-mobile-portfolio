@@ -1,9 +1,3 @@
-/*It looks like forced reflow causing a performance bottle neck is one of the problems. the other one could be that we need to use a web worker to move some of the code over.
-also, I dont know if they want the scroll animation to be smoothed out or if they want the animation that happens when the user resizes the pizza to be smoothed out. Oh, I need to fix BOTH
-Would request animation frame be helpful? Does paint have anything to do with the problems?
-For the pizza sizing, it seems like its a layout issue because layout says forced reflow could cause performance bottleneck.
-*/
-
 /*
 Welcome to the 60fps project! Your goal is to make Cam's Pizzeria website run
 jank-free at 60 frames per second.
@@ -391,7 +385,6 @@ var pizzaElementGenerator = function(i) {
   pizzaImageContainer.appendChild(pizzaImage);
   pizzaContainer.appendChild(pizzaImageContainer);
 
-
   pizzaDescriptionContainer.style.width="65%";
 
   pizzaName = document.createElement("h4");
@@ -405,10 +398,6 @@ var pizzaElementGenerator = function(i) {
 
   return pizzaContainer;
 };
-
-
-
-
 
 // resizePizzas(size) is called when the slider in the "Our Pizzas" section of the website moves.
 var resizePizzas = function(size) {
@@ -458,35 +447,29 @@ var resizePizzas = function(size) {
 
     return dx;
   }
-//I avoided having to go to the DOM over and over again in the for loops of the two functions below by holding the results in these variables
+  //I avoided having to go to the DOM over and over again in the for loops of the two functions below by holding the results in these variables
   var lengthHolderOne = document.getElementsByClassName('randomPizzaContainer');
   var lengthHolderTwo = document.getElementsByClassName("randomPizzaContainer").length;
 
   function layout(size){
-  for(var i = 0; i < lengthHolderTwo; i++){
-  var dx = determineDx((lengthHolderOne)[i], size);
-  var newwidth = (lengthHolderOne[i].offsetWidth + dx) + 'px';
-  return newwidth;
+    for(var i = 0; i < lengthHolderTwo; i++){
+      var dx = determineDx((lengthHolderOne)[i], size);
+      var newwidth = (lengthHolderOne[i].offsetWidth + dx) + 'px';
+
+      return newwidth;
+    }
   }
-}
-var newwidth = layout(size);
+
+  var newwidth = layout(size);
   // Iterates through pizza elements on the page and changes their widths
   //Question, whenever I try to change querySelectorAll to getElementsByClassName it breaks my code and the pizzas dont resize. Any idea why?
   function changePizzaSizes(size) {
     for (var i = 0; i < lengthHolderTwo; i++) {
-
       lengthHolderOne[i].style.width = newwidth;
     }
   }
 
   changePizzaSizes(size);
-
-
-
-
-
-
-
 
   // User Timing API is awesome
   window.performance.mark("mark_end_resize");
@@ -509,10 +492,6 @@ window.performance.measure("measure_pizza_generation", "mark_start_generating", 
 var timeToGenerate = window.performance.getEntriesByName("measure_pizza_generation");
 console.log("Time to generate pizzas on load: " + timeToGenerate[0].duration + "ms");
 
-
-
-
-
 // Iterator for number of times the pizzas in the background have scrolled.
 // Used by updatePositions() to decide when to log the average time per frame
 //I got it from an average of 12 frames per second up to about 40 fps but still need to get it closer to 60 fps so Im not done yet :(
@@ -532,56 +511,34 @@ function logAverageFrame(times) {   // times is the array of User Timing measure
 // https://www.igvita.com/slides/2012/devtools-tips-and-tricks/jank-demo.html
 
 // Moves the sliding background pizzas based on scroll position
-
 function updatePositions() {
-
   frame++;
   window.performance.mark("mark_start_frame");
-/*I could use windows onload to load items first (I would have to do this: window.onload(){var items = document.querySelectorAll('.mover');   and then have the entire rest of the code in here. the problem is I dont know if it
-effect performance since none of the javascript will load until everything else is?})*/
-  var items = document.querySelectorAll('.mover');
 
-//this array holds all of the possible positions of pizza moving horizontally
+  items = document.querySelectorAll('.mover');
+  //this array holds all of the possible positions of pizza moving horizontally
   var pizzaHolder = new Array();
 
   //I created a separate for loop to push all of the phase values into an array to separate layout calulating from recalulating styles
   //I also separated out the first part of the calculation of var phase becuase it doesn't change and thus doesn't need to be recalculated over and over
 
-
-var pizzaWidth = 73.33;
-var pizzaHeight = 100;
-var numColumns = screen.width/pizzaWidth;
-var numRows = screen.height/pizzaHeight;
-var numPizzas = numRows*numColumns;
-//then plug in numPizzas
-
-console.log(numColumns);
-console.log(numRows);
-console.log(numPizzas);
-
   var lengthHolder = items.length;
   var phaseHolder = document.body.scrollTop / 1250;
 
-  for (var i = 0; i <numPizzas; i++) {
-  var phase = Math.sin((phaseHolder) + (i % 5));
-  pizzaHolder.push(phase);
+  for (var i = 0; i < lengthHolder; i++) {
+    var phase = Math.sin((phaseHolder) + (i % 5));
+    pizzaHolder.push(phase);
   }
 
   for (var i = 0; i <lengthHolder; i++) {
-        items[i].style.left = items[i].basicLeft + 100 * pizzaHolder[i] + 'px';
+    items[i].style.left = items[i].basicLeft + 100 * pizzaHolder[i] + 'px';
   }
 
-
-
-  /*for (var i = 0; i < items.length; i++) {
-    //this is where the forced reflow is. The scrollTop property sets or returns the number of pixels an element's content is scrolled vertically. This means its calculating something using layout before style!
-        var phase = Math.sin((document.body.scrollTop / 1250) + (i % 5));
-        items[i].style.left = items[i].basicLeft + 100 * phase + 'px';
-}*/
   // User Timing API to the rescue again. Seriously, it's worth learning.
   // Super easy to create custom metrics.
   window.performance.mark("mark_end_frame");
   window.performance.measure("measure_frame_duration", "mark_start_frame", "mark_end_frame");
+
   if (frame % 10 === 0) {
     var timesToUpdatePosition = window.performance.getEntriesByName("measure_frame_duration");
     logAverageFrame(timesToUpdatePosition);
@@ -593,9 +550,10 @@ window.addEventListener('scroll', updatePositions);
 
 // Generates the sliding pizzas when the page loads.
 document.addEventListener('DOMContentLoaded', function() {
+
   var cols = 8;
   var s = 256;
-  for (var i = 0; i < 200; i++) {
+  for (var i = 0; i < 35; i++) {
     var elem = document.createElement('img');
     elem.className = 'mover';
     elem.src = "images/pizza.png";
@@ -607,3 +565,5 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   updatePositions();
 });
+
+var items;
