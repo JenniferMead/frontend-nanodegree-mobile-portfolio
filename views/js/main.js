@@ -24,6 +24,8 @@ cameron *at* udacity *dot* com
 
 // As you may have realized, this website randomly generates pizzas.
 // Here are arrays of all possible pizza ingredients.
+
+
 var pizzaIngredients = {};
 pizzaIngredients.meats = [
   "Pepperoni",
@@ -530,10 +532,13 @@ function logAverageFrame(times) {   // times is the array of User Timing measure
 // https://www.igvita.com/slides/2012/devtools-tips-and-tricks/jank-demo.html
 
 // Moves the sliding background pizzas based on scroll position
+var items = document.querySelectorAll('.mover');
 function updatePositions() {
 
   frame++;
   window.performance.mark("mark_start_frame");
+/*I could use windows onload to load items first (I would have to do this: window.onload(){var items = document.querySelectorAll('.mover');   and then have the entire rest of the code in here. the problem is I dont know if it
+effect performance since none of the javascript will load until everything else is?})*/
   var items = document.querySelectorAll('.mover');
 
 //this array holds all of the possible positions of pizza moving horizontally
