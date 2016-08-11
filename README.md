@@ -8,8 +8,8 @@
 
 ###Optimizations made to views/js/main.js
 1. Optimized the pizza resizing script 
-  a. I separated the changePizzaSizes function into two separate functions to prevent recalculating layout and then style. To do this I made a separate function called layout that calculates the layout and then returns the results to be used later by the changePizzaSizes function. 
-  b. I avoided accessing the DOM to get the randomPizzaContainer class  multiple times by accessing it outside of both functions and holding it variables.
+  * I separated the changePizzaSizes function into two separate functions to prevent recalculating layout and then style. To do this I made a separate function called layout that calculates the layout and then returns the results to be used later by the changePizzaSizes function. 
+  * I avoided accessing the DOM to get the randomPizzaContainer class  multiple times by accessing it outside of both functions and holding it variables.
 
 
 ## Website Performance Optimization portfolio project
