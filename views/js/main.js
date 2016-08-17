@@ -462,7 +462,6 @@ var resizePizzas = function(size) {
 
   var newwidth = layout(size);
   // Iterates through pizza elements on the page and changes their widths
-  //Question, whenever I try to change querySelectorAll to getElementsByClassName it breaks my code and the pizzas dont resize. Any idea why?
   function changePizzaSizes(size) {
     for (var i = 0; i < lengthHolderTwo; i++) {
       lengthHolderOne[i].style.width = newwidth;
@@ -494,7 +493,6 @@ console.log("Time to generate pizzas on load: " + timeToGenerate[0].duration + "
 
 // Iterator for number of times the pizzas in the background have scrolled.
 // Used by updatePositions() to decide when to log the average time per frame
-//I got it from an average of 12 frames per second up to about 40 fps but still need to get it closer to 60 fps so Im not done yet :(
 var frame = 0;
 
 // Logs the average amount of time per 10 frames needed to move the sliding background pizzas on scroll.
@@ -515,7 +513,6 @@ function updatePositions() {
   frame++;
   window.performance.mark("mark_start_frame");
 
-  items = document.querySelectorAll('.mover');
   //this array holds all of the possible positions of pizza moving horizontally
   var pizzaHolder = new Array();
 
@@ -548,6 +545,8 @@ function updatePositions() {
 // runs updatePositions on scroll
 window.addEventListener('scroll', updatePositions);
 
+//declared the variable globally so it can be accessed by updatePositions
+var items;
 // Generates the sliding pizzas when the page loads.
 document.addEventListener('DOMContentLoaded', function() {
 
@@ -563,7 +562,7 @@ document.addEventListener('DOMContentLoaded', function() {
     elem.style.top = (Math.floor(i / cols) * s) + 'px';
     document.querySelector("#movingPizzas1").appendChild(elem);
   }
+  //replaced querySelectorAll with getElementsByClassName to boost performance, also moved this outside of the updatePositions so that the DOM isn't being queried every time you scroll
+  items = document.getElementsByClassName('mover');
   updatePositions();
 });
-
-var items;
