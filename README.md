@@ -6,7 +6,7 @@ This project was completed for Udacity's Front End Nanodegree Program. The goal 
 Download the code by selecting 'Download ZIP'. Then simply open the frontend-nanodegree-mobile-portfolio folder, right click on index.html, and open in the browser of your choice.
 
 
-###Optimizations Made to index.html
+###Optimizations made to index.html
 1. Used a web font loader to defer the loading of google fonts until AFTER other parts of the page have started to load. I also made it an asynchronous script.
 2. Used a media query to prevent the print.css from render blocking
 3. Changed script.css from an external file to internal css style sheet using a script tag and moving it over to the HTML
